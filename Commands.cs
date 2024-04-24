@@ -13,9 +13,9 @@ namespace ReverseFriendlyFire
 
         public override string Command { get; } = "rff";
 
-        public override string[] Aliases { get; } = Array.Empty<string>();
+        public override string[] Aliases => Plugin.PluginTranslation.ParentCommandAliases;
 
-        public override string Description { get; } = "Reverse Friendly Fire management";
+        public override string Description => Plugin.PluginTranslation.ParentCommandDescription;
 
         public static ReverseFriendlyFireCommand Create()
         {
@@ -26,7 +26,7 @@ namespace ReverseFriendlyFire
 
         protected override bool ExecuteParent(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
-            response = $"Available commands:\nrff toggle - enabling/disabling RFF\nrff info <players> - checking players' kills and damage";
+            response = $"{Plugin.PluginTranslation.AvailableCommands}\n{string.Join("\n", AllCommands.Select(x => $"{Command} {x.Command} - {x.Description}"))}";
             return false;
         }
 
@@ -42,19 +42,19 @@ namespace ReverseFriendlyFire
     {
         public string Command { get; } = "toggle";
 
-        public string[] Aliases { get; } = Array.Empty<string>();
+        public string[] Aliases => Plugin.PluginTranslation.ToggleCommandAliases;
 
-        public string Description { get; } = null;
+        public string Description => Plugin.PluginTranslation.ToggleCommandDescription;
 
         public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
             if (!sender.CheckPermission($"rff.{Command}"))
             {
-                response = "Insufficient permissions";
+                response = Plugin.PluginTranslation.InsufficientPermissions;
                 return false;
             }
 
-            response = $"RFF has been {((EventHandlers.RffEnabled = !EventHandlers.RffEnabled) ? "enabled" : "disabled")}";
+            response = Plugin.PluginTranslation.ToggleCommandResponse.Replace("%state%", (EventHandlers.RffEnabled = !EventHandlers.RffEnabled) ? Plugin.PluginTranslation.ToggleCommandRffEnabled : Plugin.PluginTranslation.ToggleCommandRffDisabled);
             return true;
         }
     }
@@ -64,27 +64,27 @@ namespace ReverseFriendlyFire
     {
         public string Command { get; } = "info";
 
-        public string[] Aliases { get; } = Array.Empty<string>();
+        public string[] Aliases => Plugin.PluginTranslation.InfoCommandAliases;
 
-        public string Description { get; } = null;
+        public string Description => Plugin.PluginTranslation.InfoCommandDescription;
 
         public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
             if (!sender.CheckPermission($"rff.{Command}"))
             {
-                response = "Insufficient permissions";
+                response = Plugin.PluginTranslation.InsufficientPermissions;
                 return false;
             }
 
             if (arguments.Count < 1)
             {
-                response = "Usage: rff info <players>";
+                response = Plugin.PluginTranslation.InfoCommandUsage;
                 return false;
             }
 
             var hubs = RAUtils.ProcessPlayerIdOrNamesList(arguments, 0, out _);
 
-            response = $"Nickname | State | Kills | Damage\n{string.Join("\n", hubs.Select(x => $"{x.nicknameSync.CombinedName} | {(EventHandlers.PlayerDataDictionary.TryGetValue(x.authManager.UserId, out var pd) ? $"{(pd.ReverseDamageActivated ? "Enabled" : "Disabled")} | {pd.Kills} | {pd.Damage}" : "Not found")}"))}";
+            response = $"{Plugin.PluginTranslation.InfoCommandTableHeader}\n{string.Join("\n", hubs.Select(x => $"{x.nicknameSync.CombinedName} | {(EventHandlers.PlayerDataDictionary.TryGetValue(x.authManager.UserId, out var pd) ? $"{(pd.ReverseDamageActivated ? Plugin.PluginTranslation.InfoCommandTableReverseDamageEnabled : Plugin.PluginTranslation.InfoCommandTableReverseDamageDisabled)} | {pd.Kills} | {pd.Damage}" : Plugin.PluginTranslation.InfoCommandTableNotFound)}"))}";
             return true;
         }
     }

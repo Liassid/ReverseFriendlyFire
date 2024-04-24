@@ -32,7 +32,7 @@ namespace ReverseFriendlyFire
             {
                 if (pd.ReverseDamageActivated)
                 {
-                    ev.Player.ShowHint(Plugin.PluginConfig.ReverseDamageActivationHint);
+                    ev.Player.ShowHint(Plugin.PluginTranslation.ReverseDamageActivationHint);
                     Log.Debug($"{ev.Player.CustomName} ({ev.Player.UserId}) has damage reversing activated");
                 }
                 return;
@@ -50,7 +50,7 @@ namespace ReverseFriendlyFire
             if (pd.ReverseDamageActivated)
             {
                 ev.IsAllowed = false;
-                ev.Attacker?.Hurt(adh.Damage, Plugin.PluginConfig.ReverseDamageReason);
+                ev.Attacker?.Hurt(adh.Damage, Plugin.PluginTranslation.ReverseDamageReason);
                 Log.Debug($"{adh.AttackerFootprint.Nickname} ({adh.AttackerFootprint.LogUserID})'s damage ({adh.Damage}) to {adh.TargetFootprint.Nickname} ({adh.TargetFootprint.LogUserID}) has been reversed");
                 return;
             }
@@ -60,7 +60,7 @@ namespace ReverseFriendlyFire
             if ((pd.Damage += adh.Damage * multiplier) >= Plugin.PluginConfig.DamageThreshold)
             {
                 pd.ReverseDamageActivated = true;
-                ev.Attacker?.ShowHint(Plugin.PluginConfig.ReverseDamageActivationHint);
+                ev.Attacker?.ShowHint(Plugin.PluginTranslation.ReverseDamageActivationHint);
                 Events.Events.OnReverseDamageActivated(new ReverseDamageActivatedEventArgs(adh.AttackerFootprint.LogUserID, ReverseDamageActivationReason.Damage, pd));
                 Log.Debug($"{adh.AttackerFootprint.Nickname} ({adh.AttackerFootprint.LogUserID})'s damage ({pd.Damage}/{Plugin.PluginConfig.DamageThreshold}, {adh.Damage}, {multiplier}) to {adh.TargetFootprint.Nickname} ({adh.TargetFootprint.LogUserID}) activated damage reversing");
             }
@@ -76,7 +76,7 @@ namespace ReverseFriendlyFire
             if ((pd.Kills += multiplier) >= Plugin.PluginConfig.KillsThreshold)
             {
                 pd.ReverseDamageActivated = true;
-                ev.Attacker?.ShowHint(Plugin.PluginConfig.ReverseDamageActivationHint);
+                ev.Attacker?.ShowHint(Plugin.PluginTranslation.ReverseDamageActivationHint);
                 Events.Events.OnReverseDamageActivated(new ReverseDamageActivatedEventArgs(adh.AttackerFootprint.LogUserID, ReverseDamageActivationReason.Kill, pd));
                 Log.Debug($"{adh.AttackerFootprint.Nickname} ({adh.AttackerFootprint.LogUserID})'s kill ({pd.Kills}/{Plugin.PluginConfig.KillsThreshold}, {multiplier}) of {adh.TargetFootprint.Nickname} ({adh.TargetFootprint.LogUserID}) activated damage reversing");
             }
